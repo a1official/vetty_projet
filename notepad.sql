@@ -13,6 +13,25 @@ WHERE refund_time IS NULL
 GROUP BY DATE_TRUNC('month', purchase_time)
 ORDER BY month;
 
+/*Approach
+Directly filter the transactions table to only include purchases made in October 2020.
+After applying the date range, group the results by store_id and count how many transactions each store has in that month. 
+From that grouped output, keep only the stores with at least five purchases, and finally count how many such stores there are.*/
+/* Q2: Stores with at least 5 purchases in October 2020 */
+SELECT COUNT(*) AS stores_with_min_5_tx
+FROM (
+  SELECT store_id, COUNT(*) AS tx_count
+  FROM transactions
+  WHERE purchase_time >= DATE '2020-10-01'
+    AND purchase_time <  DATE '2020-11-01'
+  GROUP BY store_id
+  HAVING COUNT(*) >= 5
+) AS sub;
+
+
+
+
+
 
 
 
