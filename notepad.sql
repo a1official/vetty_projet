@@ -93,6 +93,26 @@ ORDER BY first_purchase_count DESC
 LIMIT 1;   
 
 
+/*Approach
+
+A transaction is considered refund-processable only if a refund actually happened (i.e., refund_time is not null) and the refund occurred within 72 hours of the original purchase.
+To determine this, calculate the time gap between purchase_time and refund_time in hours, then mark the transaction with a flag indicating whether it meets the 72-hour limit.*/
+/* Q6: Flag indicating whether refund is processable within 72 hours */
+SELECT
+    buyer_id,
+    store_id,
+    item_id,
+    purchase_time,
+    refund_time,
+    CASE
+        WHEN refund_time IS NULL THEN 'not_refundable'
+        WHEN EXTRACT(EPOCH FROM (refund_time - purchase_time)) / 3600 <= 72
+             THEN 'processable'
+        ELSE 'not_processable'
+    END AS refund_flag
+FROM transactions;
+
+
 
 
 
