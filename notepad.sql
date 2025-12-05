@@ -143,6 +143,27 @@ FROM ranked
 WHERE rn = 2;
 
 
+/*Approach
+
+To get each buyer’s second transaction time without relying on MIN or MAX, sort all of their transactions in time order and assign a row number within each buyer group.
+Then simply select the entry where the row number is 2 — that timestamp represents the buyer’s second transaction.
+Since the problem statement doesn’t mention excluding refunded purchases for Q8, we keep every transaction in the dataset.*/
+
+WITH ordered AS (
+    SELECT
+        buyer_id,
+        purchase_time,
+        ROW_NUMBER() OVER (
+            PARTITION BY buyer_id
+            ORDER BY purchase_time
+        ) AS rn
+    FROM transactions
+)
+SELECT buyer_id, purchase_time AS second_transaction_time
+FROM ordered
+WHERE rn = 2;
+
+
 
 
 
