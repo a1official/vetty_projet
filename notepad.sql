@@ -63,6 +63,39 @@ WHERE rn = 1
 ORDER BY store_id;
 
 
+/* question 5  approach
+Identify each buyer’s very first purchase by ordering their transactions chronologically and assigning a row number starting at 1.
+Once we isolate those first-purchase rows, join them to the items table to get the corresponding item names (some may be null if the item doesn’t exist in items). 
+Then, count how often each item appears as a buyer’s first purchase. Finally, sort these counts in descending order and return the item that shows up the most.*/
+/* Q5: Find the item name most frequently chosen on a buyer's first-ever purchase */
+WITH buyer_first_tx AS (
+  SELECT
+    buyer_id,
+    store_id,
+    item_id,
+    purchase_time,
+    ROW_NUMBER() OVER (
+      PARTITION BY buyer_id
+      ORDER BY purchase_time
+    ) AS rn
+  FROM transactions
+)
+SELECT
+  it.item_name,
+  COUNT(*) AS first_purchase_count
+FROM buyer_first_tx b
+LEFT JOIN items it
+  ON it.store_id = b.store_id
+ AND it.item_id  = b.item_id
+WHERE b.rn = 1
+GROUP BY it.item_name
+ORDER BY first_purchase_count DESC
+LIMIT 1;   
+
+
+
+
+
 
 
 
