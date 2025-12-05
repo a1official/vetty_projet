@@ -45,6 +45,27 @@ GROUP BY store_id
 ORDER BY store_id;
 
 
+/* Q4 
+approach : window function is used
+Approach
+For each store_id, find the earliest purchase_time and return that row’s gross_transaction_value. We can use ROW_NUMBER() over partition by store_id ordered by purchase_time ASC.
+ Q4: gross_transaction_value of each store's first order (including refunds) */
+SELECT store_id, purchase_time, gross_transaction_value
+FROM (
+  SELECT
+    store_id,
+    purchase_time,
+    gross_transaction_value,
+    ROW_NUMBER() OVER (PARTITION BY store_id ORDER BY purchase_time ASC) AS rn
+  FROM transactions
+) t
+WHERE rn = 1
+ORDER BY store_id;
+
+
+
+
+
 
 
 
