@@ -113,6 +113,35 @@ SELECT
 FROM transactions;
 
 
+/*Approach
+
+Start by filtering out any refunded transactions so that only completed purchases remain.
+For each buyer, sort their purchases in chronological order and assign a sequential number using ROW_NUMBER(). 
+Once the ranking is applied, select only the entries where the row number equals 2 — these represent each buyer’s second purchase.
+*/
+
+
+WITH cleaned AS (
+    SELECT *
+    FROM transactions
+    WHERE refund_time IS NULL
+),
+ranked AS (
+    SELECT
+        buyer_id,
+        store_id,
+        item_id,
+        purchase_time,
+        ROW_NUMBER() OVER (
+            PARTITION BY buyer_id
+            ORDER BY purchase_time
+        ) AS rn
+    FROM cleaned
+)
+SELECT *
+FROM ranked
+WHERE rn = 2;
+
 
 
 
