@@ -28,6 +28,24 @@ FROM (
   HAVING COUNT(*) >= 5
 ) AS sub;
 
+/* question3 
+approach
+
+Focus only on transactions that were actually refunded . 
+For each store, calculate how long each refund took by subtracting the purchase timestamp from the refund timestamp. 
+Convert that time difference into minutes. Then, for every store, find the smallest refund interval and list those values.
+*/
+
+SELECT
+  store_id,
+  MIN(EXTRACT(EPOCH FROM (refund_time - purchase_time)) / 60.0) AS shortest_refund_minutes
+FROM transactions
+WHERE refund_time IS NOT NULL
+GROUP BY store_id
+ORDER BY store_id;
+
+
+
 
 
 
